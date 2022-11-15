@@ -1,47 +1,8 @@
-# Google OAuth2
+# Org-Fit-HS
 
-Interactive Google OAuth2 token negotiation
+Extremely hacky scipt based on https://github.com/pbrisbin/google-oauth2 used to retrieve Google Fit data
+and process it for org mode time stamps.
 
 ## Usage
-
-```haskell
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RecordWildCards #-}
-
-module Main (main) where
-
-import Data.Aeson
-import Data.Semigroup ((<>))
-import Network.Google.OAuth2
-import Network.HTTP.Simple
-import Network.OAuth.OAuth2
-import Data.Text.Encoding (encodeUtf8)
-
-main :: IO ()
-main = do
-    OAuth2Token{..} <-
-      getAccessToken
-        "<CLIENT_ID>"      -- Fill with real ID.
-        "<CLIENT_SECRET>"  -- Fill with real code.
-        ["https://www.googleapis.com/auth/drive"]
-        (Just "path/to/credentials.cache")
-
-    request <- parseRequest "https://www.googleapis.com/drive/v2/files"
-    response <- httpJSON $ authorize (atoken accessToken) request
-
-    print (getResponseBody response :: Value)
- where
-   authorize token = setRequestHeaders
-       [ ("Authorization", encodeUtf8 $ "Bearer " <> token)
-       ]
-```
-
-## Prior Art
-
-This module was inspired by [handa-gdata][] which appears to be abandoned.
-
-[handa-gdata]: http://hackage.haskell.org/package/handa-gdata
-
----
-
-[CHANGELOG](./CHANGELOG.md) | [LICENSE](./LICENSE)
+Place your client id and your client secret in one line each in `~/.local/share/org-fit-hs.credentials`, then run `stack install` to generate the `org-fit` executable.
+It retrieves all Google Fit activity measured by my specific phone and outputs the times as org mode clock timespans, between the first command line argument (the start time) in a format along the lines of `2022-11-15 12:20:00 UTC` and the current time.
