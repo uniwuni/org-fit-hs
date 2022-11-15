@@ -13,17 +13,21 @@ dependencies:
   - bytestring
   - hoauth2
   - text
-
+  - time
+  - http-client-tls
+  - safe-exceptions
+  - transformers
+  - uri-bytestring
+  - time
+  - vector
+  - filepath
+  - directory
+  - http-conduit
 ghc-options: -Wall
 
 library:
   source-dirs: src
   ghc-options: -Wall
-  dependencies:
-    - http-client-tls
-    - safe-exceptions
-    - transformers
-    - uri-bytestring
 
 tests:
   spec:
@@ -35,3 +39,11 @@ tests:
       - hspec
       - http-conduit
       - load-env
+
+executables:
+  get-fit:
+    source-dirs: app
+    main: Main.hs
+    dependencies:
+      - google-oauth2
+      - aeson
