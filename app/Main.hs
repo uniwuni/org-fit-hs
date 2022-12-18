@@ -51,7 +51,7 @@ timeToOrgMode :: UTCTime -> IO String
 timeToOrgMode time = do
   timeZone <- getCurrentTimeZone
   let b = utcToLocalTime timeZone time
-  return $ "[" ++ init (init (show b)) ++ "]"
+  return $ "[" ++ init (init (init (show b))) ++ "]"
 
 activityToOrgMode :: Activity -> IO String
 activityToOrgMode a = do
