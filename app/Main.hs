@@ -51,7 +51,7 @@ timeToOrgMode :: UTCTime -> IO String
 timeToOrgMode time = do
   timeZone <- getCurrentTimeZone
   let b = utcToLocalTime timeZone time
-  return $ "[" ++ show b ++ "]"
+  return $ "[" ++ init (init (show b)) ++ "]"
 
 activityToOrgMode :: Activity -> IO String
 activityToOrgMode a = do
@@ -75,12 +75,6 @@ correctFitnessValues :: String -> IO (Maybe Activities)
 correctFitnessValues x= do
   t <- getCurrentTime
   fitnessValues (read x) t
-
-correctFitnessValues' :: String -> IO ()
-correctFitnessValues' x = do
-  t <- getCurrentTime
-  fitnessValues' (read x) t
-
 
 fitnessValues :: UTCTime -> UTCTime -> IO (Maybe Activities)
 fitnessValues from to = do
@@ -115,20 +109,3 @@ main = do
   data2 <- maybe (return []) id (fmap sequence data1')
   mapM_ putStr data2
 
-
-fitnessValues' :: UTCTime -> UTCTime -> IO ()
-fitnessValues' from to = do
-    OAuth2Token{..} <-
-      getAccessToken
-        "489384654639-0t4oij8tqscj0v645bs9erl2igu43cfi.apps.googleusercontent.com"      -- Fill with real ID.
-        "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"  -- Fill with real code.
-        ["https://www.googleapis.com/auth/fitness.activity.read"]
-        (Just "credentials.cache")
-
-    request <- parseRequest $ "https://www.googleapis.com/fitness/v1/users/me/dataSources/derived:com.google.activity.segment:com.google.android.gms:merge_activity_segments/datasets/"++ utcToNanos from++"-"++ utcToNanos to
-    response <- httpJSON $ authorize (atoken accessToken) request
-    print $ (fromJSON $ getResponseBody response :: Result Activities)
- where
-   authorize token = setRequestHeaders
-       [ ("Authorization", encodeUtf8 $ "Bearer " <> token)
-       ]
